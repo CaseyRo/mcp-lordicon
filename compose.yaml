@@ -1,0 +1,35 @@
+services:
+  mcp-lordicon:
+    build:
+      context: .
+      args:
+        GIT_COMMIT: ${GIT_COMMIT:-unknown}
+    restart: unless-stopped
+    ports:
+      # Binds on all interfaces so the Cloudflare MCP Portal can reach
+      # the service via the Tailscale hostname `ubuntu-smurf-mirror:8013`.
+      # The MCP endpoint is still protected by MCP_API_KEY bearer auth.
+      - "8013:8000"
+    environment:
+      - TRANSPORT=http
+      - HOST=0.0.0.0
+      - LORDICON_TOKEN=${LORDICON_TOKEN:-}
+      - LORDICON_URL=${LORDICON_URL:-https://api.lordicon.com}
+      - MCP_API_KEY=${MCP_API_KEY:-}
+      - FASTMCP_HOME=/data/fastmcp
+      - GIT_COMMIT=${GIT_COMMIT:-unknown}
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+          cpus: "0.5"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    volumes:
+      - fastmcp-data:/data/fastmcp
+
+volumes:
+  fastmcp-data:

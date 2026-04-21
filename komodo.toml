@@ -1,0 +1,27 @@
+[[server]]
+name = "ubuntu-smurf-mirror"
+[server.config]
+address = "http://ubuntu-smurf-mirror:8120"
+enabled = true
+
+[[stack]]
+name = "git-mcp-lordicon"
+description = "MCP server for Lordicon icon discovery (FastMCP 3.x)"
+deploy = true
+tags = ["mcp"]
+
+[stack.config]
+server_id = "ubuntu-smurf-mirror"
+git_provider = "github.com"
+git_account = "caseyro"
+repo = "CaseyRo/mcp-lordicon"
+branch = "main"
+webhook_enabled = true
+auto_pull = true
+run_build = true
+file_paths = ["compose.yaml"]
+environment = """
+LORDICON_TOKEN = [[LORDICON_TOKEN]]
+MCP_API_KEY = [[MCP_LORDICON_API_KEY]]
+MCP_LORDICON_PUBLIC_URL = https://mcp-lordicon.cdit-dev.de
+"""
