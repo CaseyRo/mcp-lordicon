@@ -3,7 +3,7 @@
 - [x] 1.1 Register a Lordicon API project at https://lordicon.com/account/api; capture the demo Bearer token in 1Password via the service-worker policy (credential reference: `op://terminal access/Lordicon API Credentials/credential`)
 - [ ] 1.2 Submit the API project for Pro verification (linked to the existing Lordicon Pro subscription)
 - [ ] 1.3 Re-verify port 8013 has not been claimed on `ubuntu-smurf-mirror` since 2026-04-19 (e.g., `km list`, or query the Komodo API)
-- [ ] 1.4 Create the GitHub repo `CaseyRo/mcp-lordicon`
+- [x] 1.4 Create the GitHub repo `CaseyRo/mcp-lordicon`
 - [ ] 1.5 Generate `MCP_LORDICON_API_KEY` (32-byte random) and register it as a Komodo variable
 - [ ] 1.6 Register `LORDICON_TOKEN` as a Komodo variable (value from 1Password per policy)
 
