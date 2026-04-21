@@ -67,8 +67,8 @@
 
 ## 11. Local verification
 
-- [ ] 11.1 Run `uv run mcp-lordicon` (stdio); confirm four tools register via the FastMCP inspector
-- [ ] 11.2 Run `docker compose up` locally; `curl http://127.0.0.1:8013/health` returns `{status, service}`; authenticated MCP surface reachable at `http://127.0.0.1:8013/mcp`
+- [x] 11.1 Run `uv run mcp-lordicon` (stdio); confirm four tools register via the FastMCP inspector
+- [x] 11.2 Run `docker compose up` locally; `curl http://127.0.0.1:8013/health` returns `{status, service}`; authenticated MCP surface reachable at `http://127.0.0.1:8013/mcp`
 - [ ] 11.3 From CC1 via Tailscale: `curl http://ubuntu-smurf-mirror:8013/health` returns healthy (post-deploy check)
 
 ## 12. Deploy
