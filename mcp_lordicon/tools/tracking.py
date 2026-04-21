@@ -19,9 +19,7 @@ from mcp_lordicon.models.tracking import (
 )
 
 FamilyLiteral = Literal["system", "wired"]
-StyleLiteral = Literal[
-    "regular", "solid", "flat", "gradient", "lineal", "outline"
-]
+StyleLiteral = Literal["regular", "solid", "flat", "gradient", "lineal", "outline"]
 
 
 async def track_download(
@@ -45,9 +43,7 @@ async def track_download(
         style=style,
         index=index,
     )
-    return DownloadTrackResult(
-        tracked=True, family=family, style=style, index=index
-    )
+    return DownloadTrackResult(tracked=True, family=family, style=style, index=index)
 
 
 async def get_download_stats(
@@ -76,7 +72,9 @@ async def get_download_stats(
         for item in raw_list
     ]
 
-    total = int(headers.get("X-Total-Count", headers.get("x-total-count", len(results))))
+    total = int(
+        headers.get("X-Total-Count", headers.get("x-total-count", len(results)))
+    )
     current_page = int(headers.get("X-Page", headers.get("x-page", page)))
     per_page = int(headers.get("X-Per-Page", headers.get("x-per-page", limit)))
     next_page = current_page + 1 if current_page * per_page < total else None

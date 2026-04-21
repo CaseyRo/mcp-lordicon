@@ -17,9 +17,7 @@ from mcp_lordicon.models.icons import (
 )
 
 FamilyLiteral = Literal["system", "wired"]
-StyleLiteral = Literal[
-    "regular", "solid", "flat", "gradient", "lineal", "outline"
-]
+StyleLiteral = Literal["regular", "solid", "flat", "gradient", "lineal", "outline"]
 
 
 def _extract_src_hash(json_url: str, family: str, style: str, index: int) -> str:
@@ -46,9 +44,7 @@ def _extract_src_hash(json_url: str, family: str, style: str, index: int) -> str
     return f"{family}-{style}-{index}"
 
 
-def _build_embed(
-    json_url: str, family: str, style: str, index: int
-) -> IconEmbed:
+def _build_embed(json_url: str, family: str, style: str, index: int) -> IconEmbed:
     src_hash = _extract_src_hash(json_url, family, style, index)
     web_component = (
         f'<lord-icon src="{json_url}" trigger="hover" '
@@ -57,7 +53,7 @@ def _build_embed(
     react_player = (
         "import { Player } from '@lordicon/react';\n"
         f"// Fetch {json_url} and pass the parsed JSON as `icon`:\n"
-        "<Player icon={ICON_DATA} trigger=\"hover\" />"
+        '<Player icon={ICON_DATA} trigger="hover" />'
     )
     return IconEmbed(
         web_component=web_component,
@@ -125,7 +121,9 @@ async def search_icons(
     raw_list = body if isinstance(body, list) else []
     results = [_result_from_api(item) for item in raw_list]
 
-    total = int(headers.get("X-Total-Count", headers.get("x-total-count", len(results))))
+    total = int(
+        headers.get("X-Total-Count", headers.get("x-total-count", len(results)))
+    )
     current_page = int(headers.get("X-Page", headers.get("x-page", page)))
     per_page = int(headers.get("X-Per-Page", headers.get("x-per-page", limit)))
     # Header-based pagination: another page exists if current * per_page < total

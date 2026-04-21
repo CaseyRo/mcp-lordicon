@@ -98,9 +98,7 @@ async def health_detail(request: Request) -> JSONResponse:
         if auth_header.lower().startswith("bearer "):
             token = auth_header[7:].strip()
         if not token or not hmac.compare_digest(token, _api_key):
-            return JSONResponse(
-                {"error": "unauthorized"}, status_code=401
-            )
+            return JSONResponse({"error": "unauthorized"}, status_code=401)
     uptime = int((datetime.now(timezone.utc) - _start_time).total_seconds())
     return JSONResponse(
         {

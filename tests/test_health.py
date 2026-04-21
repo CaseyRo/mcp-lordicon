@@ -7,9 +7,7 @@ version, build, git_commit, uptime_seconds, and tools.
 
 from __future__ import annotations
 
-import os
 
-import pytest
 from starlette.testclient import TestClient
 
 
@@ -51,9 +49,7 @@ def test_detail_health_requires_bearer_token(monkeypatch):
     assert resp.status_code == 401
 
     # Wrong token → 401
-    resp = client.get(
-        "/health/detail", headers={"Authorization": "Bearer wrong"}
-    )
+    resp = client.get("/health/detail", headers={"Authorization": "Bearer wrong"})
     assert resp.status_code == 401
 
     # Correct token → 200 with full payload

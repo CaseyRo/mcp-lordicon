@@ -86,13 +86,11 @@ class LordiconClient:
                         )
                         continue
                     raise ValueError(
-                        f"Upstream API error {resp.status_code}: "
-                        f"{resp.text[:200]}"
+                        f"Upstream API error {resp.status_code}: {resp.text[:200]}"
                     )
                 if resp.status_code >= 400:
                     raise ValueError(
-                        f"Upstream API error {resp.status_code}: "
-                        f"{resp.text[:200]}"
+                        f"Upstream API error {resp.status_code}: {resp.text[:200]}"
                     )
                 return resp
             except (httpx.ConnectError, httpx.ReadTimeout) as exc:

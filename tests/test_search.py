@@ -37,8 +37,8 @@ async def test_search_returns_envelope_with_embed_snippets(sample_icon):
     assert icon.preview_url.startswith("https://api.lordicon.com/")
     assert icon.embed.cdn_json_url.endswith("trophy.json?token=xyz")
     assert "<lord-icon" in icon.embed.web_component
-    assert 'src=' in icon.embed.web_component
-    assert 'trigger=' in icon.embed.web_component
+    assert "src=" in icon.embed.web_component
+    assert "trigger=" in icon.embed.web_component
     assert "Player" in icon.embed.react_player
     assert icon.embed.cdn_src_hash  # non-empty
 
