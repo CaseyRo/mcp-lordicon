@@ -9,9 +9,9 @@
 
 ## 2. Repo scaffold
 
-- [ ] 2.1 `git init`; first commit with `.gitignore`, MIT `LICENSE`, empty `README.md`, `CHANGELOG.md`
+- [x] 2.1 `git init`; first commit with `.gitignore`, MIT `LICENSE`, empty `README.md`, `CHANGELOG.md`
 - [x] 2.2 Write `pyproject.toml` per Standards §3 (hatchling, Python 3.12+, FastMCP ≥3.2.2, httpx, Pydantic, pydantic-settings; dev group with pytest + pytest-asyncio + pytest-httpx + ruff)
-- [ ] 2.3 Run `uv lock`; commit `uv.lock`
+- [x] 2.3 Run `uv lock`; commit `uv.lock`
 - [x] 2.4 Create package layout `mcp_lordicon/` with `__init__.py` (`__version__ = "0.1.0"`), `__main__.py` (`from mcp_lordicon.server import main; main()`), and `py.typed`
 - [x] 2.5 Create empty `mcp_lordicon/models/` and `mcp_lordicon/tools/` sub-packages
 
