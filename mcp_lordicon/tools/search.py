@@ -47,13 +47,13 @@ def _extract_src_hash(json_url: str, family: str, style: str, index: int) -> str
 def _build_embed(json_url: str, family: str, style: str, index: int) -> IconEmbed:
     src_hash = _extract_src_hash(json_url, family, style, index)
     web_component = (
-        f'<lord-icon src="{json_url}" trigger="hover" '
+        f'<lord-icon src="{json_url}" trigger="in" '
         f'style="width:64px;height:64px"></lord-icon>'
     )
     react_player = (
         "import { Player } from '@lordicon/react';\n"
         f"// Fetch {json_url} and pass the parsed JSON as `icon`:\n"
-        '<Player icon={ICON_DATA} trigger="hover" />'
+        '<Player icon={ICON_DATA} trigger="in" />'
     )
     return IconEmbed(
         web_component=web_component,
