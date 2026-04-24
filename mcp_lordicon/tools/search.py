@@ -106,7 +106,7 @@ async def search_icons(
     plan only when `track_download` is called.
     """
     params: dict[str, Any] = {
-        "search": query,
+        "term": query,
         "page": page,
         "per_page": limit,
     }

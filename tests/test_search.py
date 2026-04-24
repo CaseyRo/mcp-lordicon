@@ -84,7 +84,7 @@ async def test_search_filters_forwarded_to_client(sample_icon):
     assert kwargs["style"] == "outline"
     assert kwargs["premium"] == "false"
     assert kwargs["per_page"] == 20
-    assert kwargs["search"] == "arrow"
+    assert kwargs["term"] == "arrow"
 
 
 @pytest.mark.asyncio

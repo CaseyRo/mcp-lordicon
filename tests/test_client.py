@@ -33,7 +33,7 @@ async def test_client_translates_4xx_to_value_error():
     )
     with patch.object(client._client, "request", new=AsyncMock(return_value=resp)):
         with pytest.raises(ValueError, match="Upstream API error 400"):
-            await client.get_json("/v1/icons", search="x")
+            await client.get_json("/v1/icons", term="x")
     await client.close()
 
 
