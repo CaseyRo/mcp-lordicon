@@ -83,5 +83,5 @@
 
 - [x] 13.1 Write `README.md` (purpose, endpoints, env vars, local dev flow, deploy flow)
 - [x] 13.2 Update the root `CLAUDE.md` to reflect the now-scaffolded service (in-repo CLAUDE.md and root CLAUDE.md are the same file at the repo root)
-- [ ] 13.3 Add `mcp-lordicon` row to the MCP Fleet Inventory SiYuan doc (`/CDIT/Engineering/MCP Fleet Inventory`)
+- [x] 13.3 Add `mcp-lordicon` row to the MCP Fleet Inventory SiYuan doc (`/CDIT/Engineering/MCP Fleet Inventory`)
 - [x] 13.4 Create the "Project Memory: mcp-lordicon" document in Linear — project at https://linear.app/cdit/project/mcp-lordicon-aaf79420d446, doc at https://linear.app/cdit/document/project-memory-mcp-lordicon-41db719d4532
