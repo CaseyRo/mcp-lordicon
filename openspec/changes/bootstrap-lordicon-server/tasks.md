@@ -2,10 +2,10 @@
 
 - [x] 1.1 Register a Lordicon API project at https://lordicon.com/account/api; capture the demo Bearer token in 1Password via the service-worker policy (credential reference: `op://terminal access/Lordicon API Credentials/credential`)
 - [ ] 1.2 Submit the API project for Pro verification (linked to the existing Lordicon Pro subscription)
-- [ ] 1.3 Re-verify port 8013 has not been claimed on `ubuntu-smurf-mirror` since 2026-04-19 (e.g., `km list`, or query the Komodo API)
+- [x] 1.3 Re-verify port 8013 has not been claimed on `ubuntu-smurf-mirror` since 2026-04-19 (e.g., `km list`, or query the Komodo API)
 - [x] 1.4 Create the GitHub repo `CaseyRo/mcp-lordicon`
-- [ ] 1.5 Generate `MCP_LORDICON_API_KEY` (32-byte random) and register it as a Komodo variable
-- [ ] 1.6 Register `LORDICON_TOKEN` as a Komodo variable (value from 1Password per policy)
+- [x] 1.5 Generate `MCP_LORDICON_API_KEY` (32-byte random) and register it as a Komodo variable
+- [x] 1.6 Register `LORDICON_TOKEN` as a Komodo variable (value from 1Password per policy)
 
 ## 2. Repo scaffold
 
@@ -69,12 +69,12 @@
 
 - [x] 11.1 Run `uv run mcp-lordicon` (stdio); confirm four tools register via the FastMCP inspector
 - [x] 11.2 Run `docker compose up` locally; `curl http://127.0.0.1:8013/health` returns `{status, service}`; authenticated MCP surface reachable at `http://127.0.0.1:8013/mcp`
-- [ ] 11.3 From CC1 via Tailscale: `curl http://ubuntu-smurf-mirror:8013/health` returns healthy (post-deploy check)
+- [x] 11.3 From CC1 via Tailscale: `curl http://ubuntu-smurf-mirror:8013/health` returns healthy (post-deploy check)
 
 ## 12. Deploy
 
-- [ ] 12.1 Push to `main`; confirm Komodo webhook picked up the build and the container is running
-- [ ] 12.2 Run the SSH rebuild ritual on smurf to bake the real `GIT_COMMIT` (Standards §13 known limitation)
+- [x] 12.1 Push to `main`; confirm Komodo webhook picked up the build and the container is running
+- [x] 12.2 Run the SSH rebuild ritual on smurf to bake the real `GIT_COMMIT` (Standards §13 known limitation)
 - [ ] 12.3 Register `mcp-lordicon` upstream in the Cloudflare MCP Portal dashboard (upstream `http://ubuntu-smurf-mirror:8013/mcp`, bearer token from `MCP_LORDICON_API_KEY`, enabled)
 - [ ] 12.4 Verify from claude.ai: tools appear with namespace `mcp-lordicon_*`
 - [ ] 12.5 End-to-end: `search_icons("trophy")` from Claude Code (Tailscale path) and claude.ai (Portal path); confirm the returned `embed.web_component` renders in a `<lord-icon>` test page
