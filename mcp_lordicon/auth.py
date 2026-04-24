@@ -1,4 +1,4 @@
-"""Bearer token authentication for the MCP server (inbound from Portal)."""
+"""Bearer token authentication for the MCP server (inbound from Cloudflare tunnel)."""
 
 import hmac
 

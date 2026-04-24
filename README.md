@@ -39,14 +39,14 @@ docker compose up --build
 
 ## Deployment
 
-Komodo git-deploy stack `git-mcp-lordicon` on `ubuntu-smurf-mirror`. Cloudflare MCP Portal upstream at `https://mcp-lordicon.cdit-dev.de`. See `komodo.toml` and the change artifacts under `openspec/changes/bootstrap-lordicon-server/` for the full deployment contract.
+Komodo git-deploy stack `git-mcp-lordicon` on `ubuntu-smurf-mirror`. Public ingress via a dedicated Cloudflare tunnel at `https://mcp-lordicon.cdit-dev.de`. See `komodo.toml` and the change artifacts under `openspec/changes/bootstrap-lordicon-server/` for the full deployment contract.
 
 ## Environment
 
 | Variable | Required | Notes |
 |---|---|---|
 | `LORDICON_TOKEN` | yes | Bearer token from https://lordicon.com/account/api |
-| `MCP_API_KEY` | required in HTTP mode | 32-byte random; inbound bearer for the Portal |
+| `MCP_API_KEY` | required in HTTP mode | 32-byte random; inbound bearer enforced at the application layer |
 | `TRANSPORT` | optional | `stdio` (default) or `http` |
 | `HOST` | optional | `127.0.0.1` (default) |
 | `PORT` | optional | `8000` (default) — container port; host port is `8013` via compose |

@@ -168,20 +168,19 @@ Should now match the commit you just rebuilt from.
 
 ---
 
-## 5. Cloudflare MCP Portal (tasks 12.3, 12.4)
+## 5. Cloudflare tunnel (tasks 12.3, 12.4)
 
-**5a — Register the upstream.**
+**5a — Create the tunnel ingress rule.**
 
-Dashboard: <https://mcp.cdit-dev.de/portal> (or wherever the CDIT portal admin lives) → New Upstream:
+In the Cloudflare Zero Trust dashboard (Access → Tunnels), on the existing tunnel serving the CDIT fleet, add a public hostname:
 
 | Field | Value |
 |---|---|
-| Name | `mcp-lordicon` |
-| Upstream URL | `http://ubuntu-smurf-mirror:8013/mcp` |
-| Bearer token | value of `MCP_LORDICON_API_KEY` |
-| Enabled | ✅ |
+| Public hostname | `mcp-lordicon.cdit-dev.de` |
+| Service type | HTTP |
+| Service URL | `http://100.118.241.89:8013` (Tailscale IP of `ubuntu-smurf-mirror`) |
 
-Public URL should resolve to `https://mcp-lordicon.cdit-dev.de`. If a DNS record is missing, add the CNAME.
+The MCP client's bearer token is forwarded to the origin and verified at the application layer by `MCP_API_KEY`. Same per-service tunnel pattern the rest of the fleet uses.
 
 **5b — Verify from Claude Code (Tailscale path).**
 
@@ -193,7 +192,7 @@ curl -s -H "Authorization: Bearer $MCP_LORDICON_API_KEY" \
 
 Then in Claude Code, add the MCP entry referencing the Tailscale URL + token, and list tools. Expect four: `search_icons`, `list_variants`, `track_download`, `get_download_stats`.
 
-**5c — Verify from claude.ai (Portal path).** In a claude.ai conversation, confirm the four tools appear with namespace `mcp-lordicon_*`, e.g. `mcp-lordicon_search_icons`.
+**5c — Verify from claude.ai (tunnel path).** In a claude.ai conversation, confirm the four tools appear with namespace `mcp-lordicon_*`, e.g. `mcp-lordicon_search_icons`.
 
 ---
 
@@ -211,13 +210,13 @@ If it renders, the server is live.
 
 ## 7. Finalize documentation (task 13.3)
 
-**7a — Add the Fleet Inventory row.** In SiYuan (`/CDIT/Engineering/MCP Fleet Inventory`), add to the "Portal-Enabled Servers" table:
+**7a — Add the Fleet Inventory row.** In SiYuan (`/CDIT/Engineering/MCP Fleet Inventory`), add to the MCP fleet table:
 
 | Server | Host | Komodo stack | Port | Public URL | Namespace |
 |---|---|---|---|---|---|
 | mcp-lordicon | ubuntu-smurf-mirror | `git-mcp-lordicon` | 8013 | https://mcp-lordicon.cdit-dev.de | `mcp-lordicon_` |
 
-Bump "Portal-Enabled Servers (13)" heading to "(14)". Update the "Last ground-truth sync" date.
+Bump the server count heading by 1 (13 → 14). Update the "Last ground-truth sync" date.
 
 **7b — Set the Linear project to Active.** [mcp-lordicon project](https://linear.app/cdit/project/mcp-lordicon-aaf79420d446) → state: Active.
 
@@ -243,7 +242,7 @@ Archiving promotes deltas from `openspec/changes/bootstrap-lordicon-server/specs
 # Komodo dashboard → Stacks → git-mcp-lordicon → Stop
 # Or:
 ssh ubuntu-smurf-mirror "cd /etc/komodo/stacks/git-mcp-lordicon && docker compose down"
-# Cloudflare Portal → upstream `mcp-lordicon` → Disable
+# Cloudflare Zero Trust → tunnel → public hostname `mcp-lordicon.cdit-dev.de` → Delete or Disable
 ```
 
 No data to migrate — the server is a thin wrapper over `api.lordicon.com` and carries no state of its own. The `fastmcp-data` Docker volume is safe to leave in place between restarts.

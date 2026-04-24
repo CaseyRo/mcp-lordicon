@@ -65,18 +65,18 @@ The Komodo stack SHALL deploy to server `ubuntu-smurf-mirror` on host port `8013
 - **WHEN** `komodo.toml` is inspected
 - **THEN** `[[stack]]` contains `name = "git-mcp-lordicon"` and `[stack.config]` contains `server_id = "ubuntu-smurf-mirror"`
 
-#### Scenario: Host port bound on all interfaces for Portal-via-Tailscale access
+#### Scenario: Host port bound on all interfaces for tunnel-via-Tailscale access
 
 - **WHEN** `compose.yaml` is inspected
-- **THEN** the `ports` mapping is `8013:8000` (binds all interfaces) so the Cloudflare MCP Portal can reach the container via the Tailscale hostname `ubuntu-smurf-mirror:8013`; inbound authentication is enforced at the application layer via `MCP_API_KEY`. This deviates from Standards §9's `127.0.0.1`-only example and matches the reference implementation `mcp-readwise`; the rationale is captured in `design.md` decision D9.
+- **THEN** the `ports` mapping is `8013:8000` (binds all interfaces) so the Cloudflare tunnel can reach the container via the Tailscale IP `100.118.241.89:8013`; inbound authentication is enforced at the application layer via `MCP_API_KEY`. This deviates from Standards §9's `127.0.0.1`-only example and matches the reference implementation `mcp-readwise`; the rationale is captured in `design.md` decision D9.
 
-### Requirement: Public URL and Portal registration
+### Requirement: Public URL via dedicated Cloudflare tunnel
 
-The server SHALL be reachable at `https://mcp-lordicon.cdit-dev.de` via the Cloudflare MCP Portal, with namespace prefix `mcp-lordicon_` and bearer token matching `MCP_API_KEY`.
+The server SHALL be reachable at `https://mcp-lordicon.cdit-dev.de` via a dedicated Cloudflare tunnel ingress rule, with namespace prefix `mcp-lordicon_` and bearer token matching `MCP_API_KEY`. This matches the per-service tunnel pattern used by the rest of the CDIT MCP fleet.
 
-#### Scenario: Portal namespace is applied to tool names
+#### Scenario: Tunnel namespace is applied to tool names
 
-- **WHEN** the Portal exposes tools in claude.ai
+- **WHEN** the tunnel exposes tools in claude.ai
 - **THEN** every tool name is prefixed with `mcp-lordicon_` (e.g., `mcp-lordicon_search_icons`)
 
 ### Requirement: Client-layer retry and backoff

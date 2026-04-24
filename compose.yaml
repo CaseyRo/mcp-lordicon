@@ -6,9 +6,9 @@ services:
         GIT_COMMIT: ${GIT_COMMIT:-unknown}
     restart: unless-stopped
     ports:
-      # Binds on all interfaces so the Cloudflare MCP Portal can reach
-      # the service via the Tailscale hostname `ubuntu-smurf-mirror:8013`.
-      # The MCP endpoint is still protected by MCP_API_KEY bearer auth.
+      # Binds on all interfaces so the Cloudflare tunnel can reach the
+      # service via the Tailscale IP `100.118.241.89:8013`. The MCP
+      # endpoint is still protected by MCP_API_KEY bearer auth.
       - "8013:8000"
     environment:
       - TRANSPORT=http

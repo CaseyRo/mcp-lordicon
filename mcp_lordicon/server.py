@@ -7,7 +7,7 @@ and two health endpoints:
 - GET /health/detail — bearer-auth required; returns version/build/git_commit/uptime/tools
 
 The public /health hardening matches the CDIT MCP Server Standards §13 recommendation
-for Portal-exposed servers (see openspec design.md decision D6).
+for publicly-exposed MCP servers (see openspec design.md decision D6).
 """
 
 from __future__ import annotations

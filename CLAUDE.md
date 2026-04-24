@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Code**: scaffolded per OpenSpec change `bootstrap-lordicon-server` (all file-based tasks complete; shell-dependent tasks pending — see `openspec/changes/bootstrap-lordicon-server/tasks.md`)
 - **Git**: not yet initialized (`git init` + first commit is task 2.1)
-- **Deploy**: not yet shipped. Target is Komodo stack `git-mcp-lordicon` on `ubuntu-smurf-mirror`, host port **8013** → container 8000, Cloudflare MCP Portal at `https://mcp-lordicon.cdit-dev.de`
+- **Deploy**: Komodo stack `git-mcp-lordicon` on `ubuntu-smurf-mirror`, host port **8013** → container 8000. Public ingress via a dedicated Cloudflare tunnel at `https://mcp-lordicon.cdit-dev.de` (same per-service tunnel pattern the rest of the fleet uses).
 
 ## Tool surface (4 tools)
 
@@ -27,7 +27,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Read/write module split**: `tools/search.py` and `tools/tracking.py` must not import each other. Asserted by `tests/test_tracking.py` via source inspection (CDIT Standards §7.6, design D4).
 - **Embed code is pre-joined inline in search results** — do not add a separate `get_embed_code` tool (design D1, Standards §7.3).
 - **`/health` is hardened**: public `/health` returns only `{status, service}`; full payload (`version`, `build`, `git_commit`, `uptime_seconds`, `tools`) is behind bearer auth at `/health/detail` (design D6).
-- **compose.yaml binds all interfaces** (`8013:8000`), NOT `127.0.0.1`. This is an intentional deviation from Standards §9 — the Cloudflare MCP Portal upstream reaches via the Tailscale hostname, so localhost-only binding would break Portal access. Rationale: design D9. Matches `mcp-readwise` reference.
+- **compose.yaml binds all interfaces** (`8013:8000`), NOT `127.0.0.1`. This is an intentional deviation from Standards §9 — the Cloudflare tunnel reaches the container via the Tailscale IP, so localhost-only binding would break public access. Rationale: design D9. Matches `mcp-readwise` reference.
 - **Retry + backoff** is centralized in `client.py::_request` (exponential on 429, 3 retries on 5xx/timeouts — Standards §5). Tools must call `client.get_json` / `client.get_with_meta` / `client.post_json`, never raw `httpx`.
 - **Pagination via response headers**: Lordicon returns `X-Total-Count`, `X-Page`, `X-Per-Page`. `client.get_with_meta` surfaces headers so tools can build the pagination envelope. Do not expect a JSON pagination envelope from upstream.
 
@@ -52,7 +52,7 @@ These tasks require a fresh Claude Code session (the current session's Bash shel
 2. **Task 2.1** — `git init` + first commit
 3. **Task 2.3** — `uv lock`, commit `uv.lock`
 4. **Task 11.1–11.3** — local stdio run, `docker compose up`, Tailscale `/health` verification
-5. **Task 12.1–12.5** — push to main, Komodo SSH rebuild ritual for `GIT_COMMIT`, register Cloudflare Portal upstream, end-to-end smoke via claude.ai
+5. **Task 12.1–12.5** — push to main, Komodo SSH rebuild ritual for `GIT_COMMIT`, configure Cloudflare tunnel ingress for `mcp-lordicon.cdit-dev.de`, end-to-end smoke via claude.ai
 6. **Task 13.3–13.4** — update Fleet Inventory in SiYuan, create Linear project-memory doc
 
 ## Workflow reminders

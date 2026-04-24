@@ -1,8 +1,8 @@
 ## Context
 
-`mcp-lordicon` will be the 14th server in the CDIT MCP fleet (inventory last synced 2026-04-19 at `/CDIT/Engineering/MCP Fleet Inventory`). It wraps the Lordicon REST API (`api.lordicon.com`) so that LLM clients (Claude Code via Tailscale, claude.ai via Cloudflare Portal) can discover icons by concept and receive paste-ready embed snippets without round-tripping through the Lordicon web UI.
+`mcp-lordicon` will be the 14th server in the CDIT MCP fleet (inventory last synced 2026-04-19 at `/CDIT/Engineering/MCP Fleet Inventory`). It wraps the Lordicon REST API (`api.lordicon.com`) so that LLM clients (Claude Code via Tailscale, claude.ai via a dedicated Cloudflare tunnel) can discover icons by concept and receive paste-ready embed snippets without round-tripping through the Lordicon web UI.
 
-Authoritative build/deploy conventions live in `/CDIT/Engineering/MCP Server Standards` (SiYuan id `20260412124804-e6idjg9`). The reference implementation the team aligns to is `mcp-readwise`. Fleet SPOF is `nebula-1` (9 of 13 Portal servers); the decision to reduce that concentration is an open inventory item.
+Authoritative build/deploy conventions live in `/CDIT/Engineering/MCP Server Standards` (SiYuan id `20260412124804-e6idjg9`). The reference implementation the team aligns to is `mcp-readwise`. Fleet SPOF is `nebula-1` (9 of 13 MCP servers); the decision to reduce that concentration is an open inventory item.
 
 Upstream characteristics: Bearer-token auth; responses include JWT-signed download URLs for Lottie JSON / SVG variants; the Pro plan bills per premium-icon download and requires clients to self-report download events via a tracking endpoint.
 
@@ -53,7 +53,7 @@ Upstream characteristics: Bearer-token auth; responses include JWT-signed downlo
 
 ### D5. Host `ubuntu-smurf-mirror`, host port `8013`, container port `8000`
 
-**Why (host):** Fleet Inventory as of 2026-04-19 shows nebula-1 runs 9 of 13 Portal servers and is the flagged MCP SPOF. Smurf runs 2 (readwise + Zentralwerk BFF). Placing the 14th server on nebula-1 deepens the SPOF; smurf spreads load and sits next to the `mcp-readwise` reference implementation we pattern against.
+**Why (host):** Fleet Inventory as of 2026-04-19 shows nebula-1 runs 9 of 13 MCP servers and is the flagged MCP SPOF. Smurf runs 2 (readwise + Zentralwerk BFF). Placing the 14th server on nebula-1 deepens the SPOF; smurf spreads load and sits next to the `mcp-readwise` reference implementation we pattern against.
 
 **Why (port):** 8013 is unused across every host in the inventory. Maintains the 80xx convention shared by siyuan (8006), bildsprache (8007), klartext (8008), writings (8009), read-website (8010), readwise (8010 on smurf). Port 8010 is reused across hosts without conflict because each host's Docker bindings are independent.
 
@@ -61,7 +61,7 @@ Upstream characteristics: Bearer-token auth; responses include JWT-signed downlo
 
 ### D6. Public `/health` returns only `{status, service}`; version/build behind auth
 
-**Why:** Standards §13 recommends hardening public `/health` on Portal-exposed servers to reduce the fingerprinting surface (version disclosure is a reconnaissance aid). mcp-lordicon is new — starting hardened avoids a later tightening migration.
+**Why:** Standards §13 recommends hardening public `/health` on publicly-exposed MCP servers to reduce the fingerprinting surface (version disclosure is a reconnaissance aid). mcp-lordicon is new — starting hardened avoids a later tightening migration.
 
 **Implementation:** Unauth GET `/health` returns `{"status": "healthy", "service": "mcp-lordicon"}`. An authenticated variant (inside the FastMCP `/mcp` surface or a bearer-protected custom route) returns the detailed payload with `version`, `build`, `git_commit`, `uptime_seconds`, and `tools`.
 
@@ -79,11 +79,13 @@ Upstream characteristics: Bearer-token auth; responses include JWT-signed downlo
 
 ### D9. compose.yaml binds port 8013 on all interfaces, not `127.0.0.1` (deviation from Standards §9)
 
-**Why:** Standards §9 shows `127.0.0.1:<port>:8000` as the localhost-only binding example, assuming a Cloudflare tunnel colocated with the container. CDIT's actual Portal pattern registers the **Tailscale hostname** (`http://ubuntu-smurf-mirror:8013/mcp`) as the upstream — that reach requires the container to listen on the Tailscale-visible interface, not localhost. Binding on all interfaces is what the reference implementation `mcp-readwise` does for the same reason. Inbound authentication is enforced at the application layer (`MCP_API_KEY` bearer), so all-interface binding does not weaken auth posture.
+**Why:** Standards §9 shows `127.0.0.1:<port>:8000` as the localhost-only binding example, assuming a Cloudflare tunnel colocated with the container. CDIT's actual fleet pattern uses a Cloudflare tunnel running on a different host (or shared across the fleet) that reaches the container over Tailscale — specifically via the Tailscale IP `http://100.118.241.89:8013` for `ubuntu-smurf-mirror`. That reach requires the container to listen on the Tailscale-visible interface, not localhost. Binding on all interfaces is what the reference implementation `mcp-readwise` does for the same reason. Inbound authentication is enforced at the application layer (`MCP_API_KEY` bearer), so all-interface binding does not weaken auth posture.
 
-**Implication:** The Standards §9 text should be updated to reflect the Portal-via-Tailscale reality. Flagged for a follow-up to the Standards doc; this change notes the deviation in `mcp-server-runtime` spec scenario.
+**Implication:** The Standards §9 text should be updated to reflect the tunnel-via-Tailscale reality. Flagged for a follow-up to the Standards doc; this change notes the deviation in `mcp-server-runtime` spec scenario.
 
 **Alternative considered:** Bind to 127.0.0.1 per Standards §9 and run a local cloudflared-to-container proxy. Rejected — adds an extra process per server and departs from the existing fleet's working pattern.
+
+**Superseded note:** An earlier draft of this design referred to a shared "Cloudflare MCP Portal" upstream mechanism. In practice, the CDIT fleet uses dedicated per-service Cloudflare tunnels (one public hostname per MCP server), so `mcp-lordicon` follows that pattern.
 
 ## Risks / Trade-offs
 
@@ -93,7 +95,7 @@ Upstream characteristics: Bearer-token auth; responses include JWT-signed downlo
 - **[Port 8013 could be taken in the 48h since inventory sync]** → First task in `tasks.md` re-verifies via `km list` before the first deploy.
 - **[Lordicon API project demo→Pro transition is manual]** → Blocks production but not development. Dev proceeds against the demo token; swap at deploy time.
 - **[Komodo git-deploy doesn't pass `--build-arg GIT_COMMIT`]** → Known Standards §13 limitation. The semver bump in `__init__.py` is the primary deploy identifier; `git_commit` resolves to `"unknown"` until the post-deploy SSH rebuild ritual runs. Accepted.
-- **[Adding an internal-only tool surface to a new icon use surfaces a claude.ai dependency]** → If the Portal upstream is down, claude.ai loses icon search but Claude Code via Tailscale still works. Acceptable.
+- **[Adding an internal-only tool surface to a new icon use surfaces a claude.ai dependency]** → If the Cloudflare tunnel is down, claude.ai loses icon search but Claude Code via Tailscale still works. Acceptable.
 
 ## Migration Plan
 
@@ -104,8 +106,8 @@ N/A — new server, no prior state. Deployment ordering:
 3. Land the scaffold; validate locally via `uv run mcp-lordicon` (stdio transport).
 4. Provision Komodo variables `LORDICON_TOKEN` and `MCP_LORDICON_API_KEY`.
 5. Commit `komodo.toml`; push to main → Komodo webhook triggers build.
-6. Register upstream in Cloudflare MCP Portal at `https://mcp-lordicon.cdit-dev.de`.
-7. Verify `/health` via Tailscale; verify Portal surface from claude.ai.
+6. Create the Cloudflare tunnel ingress rule `mcp-lordicon.cdit-dev.de` → `http://100.118.241.89:8013`.
+7. Verify `/health` via Tailscale; verify tunnel surface from claude.ai.
 8. Add the row to the MCP Fleet Inventory SiYuan doc.
 
 Rollback: disable the Komodo stack. No data to migrate or reverse.

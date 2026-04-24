@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     host: str = "127.0.0.1"
     port: int = 8000
 
-    # Bearer token auth for the MCP Portal (inbound)
+    # Bearer token for inbound auth (Cloudflare tunnel / MCP clients)
     mcp_api_key: SecretStr = SecretStr("")
 
     model_config = {"env_prefix": "", "case_sensitive": False}

@@ -53,7 +53,7 @@
 ## 9. Docker and Komodo
 
 - [x] 9.1 Write `Dockerfile` per §9: `python:3.12-slim`, non-root `mcp` user, `HEALTHCHECK` hitting `/health`, `ARG GIT_COMMIT` baked into `/app/.git_commit`
-- [x] 9.2 Write `compose.yaml` per §9: port `8013:8000` (bind all interfaces — see design decision D9 on Portal-via-Tailscale reachability), `FASTMCP_HOME` volume, 512 MiB / 0.5 CPU limits, JSON-file log rotation (10 MB × 3)
+- [x] 9.2 Write `compose.yaml` per §9: port `8013:8000` (bind all interfaces — see design decision D9 on tunnel-via-Tailscale reachability), `FASTMCP_HOME` volume, 512 MiB / 0.5 CPU limits, JSON-file log rotation (10 MB × 3)
 - [x] 9.3 Write `komodo.toml` per §10: stack `git-mcp-lordicon` on `ubuntu-smurf-mirror`, webhook + auto-pull enabled, environment with `LORDICON_TOKEN`, `MCP_API_KEY = [[MCP_LORDICON_API_KEY]]`, `MCP_LORDICON_PUBLIC_URL = https://mcp-lordicon.cdit-dev.de`
 
 ## 10. Tests
@@ -75,9 +75,9 @@
 
 - [x] 12.1 Push to `main`; confirm Komodo webhook picked up the build and the container is running
 - [x] 12.2 Run the SSH rebuild ritual on smurf to bake the real `GIT_COMMIT` (Standards §13 known limitation)
-- [ ] 12.3 Register `mcp-lordicon` upstream in the Cloudflare MCP Portal dashboard (upstream `http://ubuntu-smurf-mirror:8013/mcp`, bearer token from `MCP_LORDICON_API_KEY`, enabled)
+- [ ] 12.3 Create a Cloudflare tunnel ingress rule for `mcp-lordicon.cdit-dev.de` → `http://100.118.241.89:8013/mcp` (Tailscale IP of `ubuntu-smurf-mirror`). Bearer `MCP_LORDICON_API_KEY` is enforced at the application layer. Matches the per-service tunnel pattern used by the other MCP servers in the fleet.
 - [ ] 12.4 Verify from claude.ai: tools appear with namespace `mcp-lordicon_*`
-- [ ] 12.5 End-to-end: `search_icons("trophy")` from Claude Code (Tailscale path) and claude.ai (Portal path); confirm the returned `embed.web_component` renders in a `<lord-icon>` test page
+- [ ] 12.5 End-to-end: `search_icons("trophy")` from Claude Code (Tailscale path) and claude.ai (tunnel path); confirm the returned `embed.web_component` renders in a `<lord-icon>` test page
 
 ## 13. Documentation
 
